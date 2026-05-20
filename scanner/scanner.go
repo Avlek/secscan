@@ -1,8 +1,16 @@
 package scanner
 
+type Statuses string
+
+const (
+	StatusOk       Statuses = "ok"
+	StatusWarning  Statuses = "warning"
+	StatusCritical Statuses = "critical"
+)
+
 type Result struct {
 	Name    string
-	Status  string
+	Status  Statuses
 	Details string
 }
 

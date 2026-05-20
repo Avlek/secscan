@@ -3,6 +3,7 @@ package scanner
 import (
 	"fmt"
 	"net"
+	"sort"
 	"strconv"
 	"sync"
 	"time"
@@ -73,55 +74,55 @@ var targetPorts = map[int]string{
 	8600:  "Consul-DNS",
 }
 
-var portStatus = map[int]string{
+var portStatus = map[int]Statuses{
 
-	80:  "ok",
-	443: "ok",
-	25:  "ok",
-	465: "ok",
-	587: "ok",
-	993: "ok",
-	995: "ok",
-	53:  "ok",
-	123: "ok",
+	80:  StatusOk,
+	443: StatusOk,
+	25:  StatusOk,
+	465: StatusOk,
+	587: StatusOk,
+	993: StatusOk,
+	995: StatusOk,
+	53:  StatusOk,
+	123: StatusOk,
 
-	22:   "warning",
-	8080: "warning",
-	8443: "warning",
-	8888: "warning",
-	3000: "warning",
-	5000: "warning",
-	9000: "warning",
-	8001: "warning",
-	21:   "warning",
-	23:   "warning",
-	161:  "warning",
+	22:   StatusWarning,
+	8080: StatusWarning,
+	8443: StatusWarning,
+	8888: StatusWarning,
+	3000: StatusWarning,
+	5000: StatusWarning,
+	9000: StatusWarning,
+	8001: StatusWarning,
+	21:   StatusWarning,
+	23:   StatusWarning,
+	161:  StatusWarning,
 
-	3306:  "critical",
-	5432:  "critical",
-	27017: "critical",
-	27018: "critical",
-	6379:  "critical",
-	1433:  "critical",
-	1521:  "critical",
-	5984:  "critical",
-	9200:  "critical",
-	9300:  "critical",
-	2375:  "critical",
-	2376:  "critical",
-	6443:  "critical",
-	3389:  "critical",
-	5900:  "critical",
-	5901:  "critical",
-	445:   "critical",
-	139:   "critical",
-	137:   "critical",
-	11211: "critical",
-	9092:  "critical",
-	2181:  "critical",
-	4369:  "critical",
-	5672:  "critical",
-	8500:  "critical",
+	3306:  StatusCritical,
+	5432:  StatusCritical,
+	27017: StatusCritical,
+	27018: StatusCritical,
+	6379:  StatusCritical,
+	1433:  StatusCritical,
+	1521:  StatusCritical,
+	5984:  StatusCritical,
+	9200:  StatusCritical,
+	9300:  StatusCritical,
+	2375:  StatusCritical,
+	2376:  StatusCritical,
+	6443:  StatusCritical,
+	3389:  StatusCritical,
+	5900:  StatusCritical,
+	5901:  StatusCritical,
+	445:   StatusCritical,
+	139:   StatusCritical,
+	137:   StatusCritical,
+	11211: StatusCritical,
+	9092:  StatusCritical,
+	2181:  StatusCritical,
+	4369:  StatusCritical,
+	5672:  StatusCritical,
+	8500:  StatusCritical,
 }
 
 type PortScanner struct{}
@@ -138,7 +139,7 @@ func (scanner *PortScanner) Scan(host string) []Result {
 			defer wg.Done()
 			conn, err := net.DialTimeout("tcp", fmt.Sprintf("%s:%d", host, port), timeout)
 			if err == nil {
-				status := "warning"
+				status := StatusWarning
 				if _, ok := portStatus[port]; ok {
 					status = portStatus[port]
 				}
@@ -154,6 +155,10 @@ func (scanner *PortScanner) Scan(host string) []Result {
 		}(k)
 	}
 	wg.Wait()
+
+	sort.Slice(results, func(i, j int) bool {
+		return results[i].Status < results[j].Status
+	})
 
 	return results
 }

@@ -17,4 +17,6 @@ func main() {
 	url := os.Args[1]
 	portScanner := scanner.PortScanner{}
 	report.PrintPorts(portScanner.Scan(url))
+	headerScanner := scanner.HeaderScanner{}
+	report.PrintHeaders(headerScanner.Scan(url))
 }
