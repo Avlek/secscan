@@ -19,4 +19,6 @@ func main() {
 	report.PrintPorts(portScanner.Scan(url))
 	headerScanner := scanner.HeaderScanner{}
 	report.PrintHeaders(headerScanner.Scan(url))
+	sslScanner := scanner.SSLScanner{}
+	report.PrintSSL(sslScanner.Scan(url))
 }

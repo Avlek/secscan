@@ -43,7 +43,7 @@ func (scanner *HeaderScanner) Scan(host string) []Result {
 				{
 					Name:    "HTTP",
 					Status:  StatusCritical,
-					Details: err.Error(),
+					Details: "не удалось подключиться: " + err.Error(),
 				},
 			}
 		}
@@ -71,7 +71,8 @@ func (scanner *HeaderScanner) Scan(host string) []Result {
 	}
 
 	sort.Slice(results, func(i, j int) bool {
-		return results[i].Status < results[j].Status
+		return statusPriority[results[i].Status] < statusPriority[results[j].Status] ||
+			statusPriority[results[i].Status] == statusPriority[results[j].Status] && results[i].Name < results[j].Name
 	})
 
 	return results

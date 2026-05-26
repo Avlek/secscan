@@ -8,6 +8,12 @@ const (
 	StatusCritical Statuses = "critical"
 )
 
+var statusPriority = map[Statuses]int{
+	StatusCritical: 0,
+	StatusWarning:  1,
+	StatusOk:       2,
+}
+
 type Result struct {
 	Name    string
 	Status  Statuses

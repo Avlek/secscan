@@ -157,7 +157,10 @@ func (scanner *PortScanner) Scan(host string) []Result {
 	wg.Wait()
 
 	sort.Slice(results, func(i, j int) bool {
-		return results[i].Status < results[j].Status
+		port1, _ := strconv.Atoi(results[i].Name)
+		port2, _ := strconv.Atoi(results[j].Name)
+		return statusPriority[results[i].Status] < statusPriority[results[j].Status] ||
+			statusPriority[results[i].Status] == statusPriority[results[j].Status] && port1 < port2
 	})
 
 	return results

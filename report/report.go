@@ -32,3 +32,11 @@ func PrintHeaders(results []scanner.Result) {
 		fmt.Printf("%-6s %s\n", icons[results[i].Status], results[i].Name)
 	}
 }
+
+func PrintSSL(results []scanner.Result) {
+	printHeader("SSL")
+
+	for i := 0; i < len(results); i++ {
+		fmt.Printf("%-6s %s: %s\n", icons[results[i].Status], results[i].Name, results[i].Details)
+	}
+}
